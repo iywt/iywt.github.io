@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<!-- saved from url=(0047)https://www.cnblogs.com/flytrace/p/3387748.html -->
+<html lang="zh-cn"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="referrer" content="origin">
+    <meta http-equiv="Cache-Control" content="no-transform">
+    <meta http-equiv="Cache-Control" content="no-siteapp">
+    <title>写给笨人的法线贴图原理 - 饭后温柔 - 博客园</title>
+    <meta property="og:description" content="我算个笨人吧.笨人以前弄懂一些东西后,讲给笨人听往往更有效.看之前请自行具备图形学关于光照的基础知识. &gt;&gt; world/object space normal map 我们先讲基于世界或">
+    <link type="text/css" rel="stylesheet" href="./写给笨人的法线贴图原理 - 饭后温柔 - 博客园_files/blog-common.css">
+<link id="MainCss" type="text/css" rel="stylesheet" href="./写给笨人的法线贴图原理 - 饭后温柔 - 博客园_files/bundle-KJC.css">
+<link id="mobile-style" media="only screen and (max-width: 767px)" type="text/css" rel="stylesheet" href="./写给笨人的法线贴图原理 - 饭后温柔 - 博客园_files/bundle-KJC-mobile.css">
+    <link title="RSS" type="application/rss+xml" rel="alternate" href="https://www.cnblogs.com/flytrace/rss">
+    <link title="RSD" type="application/rsd+xml" rel="EditURI" href="https://www.cnblogs.com/flytrace/rsd.xml">
+<link type="application/wlwmanifest+xml" rel="wlwmanifest" href="https://www.cnblogs.com/flytrace/wlwmanifest.xml">
+    <script async="" src="./写给笨人的法线贴图原理 - 饭后温柔 - 博客园_files/analytics.js.下载"></script><script src="./写给笨人的法线贴图原理 - 饭后温柔 - 博客园_files/jquery-2.2.0.min.js.下载"></script>
+    <script>var currentBlogId=84674;var currentBlogApp='flytrace',cb_enable_mathjax=false;var isLogined=false;</script>
+    <script src="./写给笨人的法线贴图原理 - 饭后温柔 - 博客园_files/blog-common.js.下载" type="text/javascript"></script>
+<link rel="preload" href="./写给笨人的法线贴图原理 - 饭后温柔 - 博客园_files/f.txt" as="script"><script type="text/javascript" src="./写给笨人的法线贴图原理 - 饭后温柔 - 博客园_files/f.txt"></script><script src="./写给笨人的法线贴图原理 - 饭后温柔 - 博客园_files/pubads_impl_2019061101.js.下载" async=""></script></head>
+<body>
+<a name="top"></a>
+
+
+<table class="Framework" cellspacing="0" cellpadding="0" width="100%">
+	<tbody><tr>
+		<td colspan="3">
+			
+<div id="top">
+<table cellpadding="10" cellspacing="0">
+	<tbody><tr>
+		<td nowrap="">
+			<h1><a id="Header1_HeaderTitle" class="headermaintitle" href="https://www.cnblogs.com/flytrace/">饭后温柔</a></h1>
+			汉堡与老干妈同嚼 有可乐味
+		</td>
+	</tr>
+</tbody></table>
+</div>
+<div id="sub">
+	<div id="sub-right"><div id="blog_stats">
+<div class="BlogStats">posts - 72, comments - 51, trackbacks - 0, articles - 12</div></div></div>
+	
+&nbsp;
+<a id="blog_nav_sitehome" href="https://www.cnblogs.com/">博客园</a>&nbsp;:: 
+<a id="blog_nav_myhome" href="https://www.cnblogs.com/flytrace/">首页</a>&nbsp;::
+<a id="blog_nav_newpost" rel="nofollow" href="https://i.cnblogs.com/EditPosts.aspx?opt=1">新随笔</a>&nbsp;::
+<a id="blog_nav_contact" accesskey="9" rel="nofollow" href="https://msg.cnblogs.com/send/%E9%A5%AD%E5%90%8E%E6%B8%A9%E6%9F%94">联系</a>&nbsp;::
+<a id="blog_nav_rss" href="https://www.cnblogs.com/flytrace/rss">订阅</a>
+<a id="blog_nav_rss_image" class="XMLLink" href="https://www.cnblogs.com/flytrace/rss"><img src="./写给笨人的法线贴图原理 - 饭后温柔 - 博客园_files/xml.gif" alt="订阅"></a>&nbsp;::
+<a id="blog_nav_admin" rel="nofollow" href="https://i.cnblogs.com/">管理</a>
+
+</div>
+		</td>
+	</tr>
+	<tr>
+		<td class="LeftCell">
+			<div id="leftmenu">
+            	
+		            <div id="blog-calendar" style="display:none"></div><script type="text/javascript">loadBlogDefaultCalendar();</script>
+		            
+	            
+	            <div id="blog-sidecolumn"><div id="sidebar_search" class="sidebar-block">
+<div id="cell">
+<img src="./写给笨人的法线贴图原理 - 饭后温柔 - 博客园_files/icon-group.jpg" hspace="5" align="left" vspace="2">
+<h3 class="catListTitle">搜索</h3>
+
+<div id="widget_my_google" class="div_my_zzk"><input type="text" name="google_q" id="google_q" onkeydown="return google_go_enter(event)" class="input_my_zzk">&nbsp;<input onclick="google_go()" type="button" value="谷歌搜索" class="btn_my_zzk"></div>
+</div></div><div id="sidebar_toptags" class="sidebar-block">
+<div id="cell">
+<img src="./写给笨人的法线贴图原理 - 饭后温柔 - 博客园_files/icon-group.jpg" hspace="5" align="left" vspace="2">
+<h3>我的标签</h3>
+<div id="MyTag">
+<ul>
+<li><a href="https://www.cnblogs.com/flytrace/tag/c%2B%2B/">c++</a>(14)</li><li><a href="https://www.cnblogs.com/flytrace/tag/ogre/">ogre</a>(12)</li><li><a href="https://www.cnblogs.com/flytrace/tag/%E7%BC%96%E7%A8%8B/">编程</a>(7)</li><li><a href="https://www.cnblogs.com/flytrace/tag/unity/">unity</a>(6)</li><li><a href="https://www.cnblogs.com/flytrace/tag/meta%20programming/">meta programming</a>(5)</li><li><a href="https://www.cnblogs.com/flytrace/tag/3d/">3d</a>(5)</li><li><a href="https://www.cnblogs.com/flytrace/tag/shader/">shader</a>(4)</li><li><a href="https://www.cnblogs.com/flytrace/tag/%E6%A8%A1%E6%9D%BF/">模板</a>(4)</li><li><a href="https://www.cnblogs.com/flytrace/tag/%E5%A4%9A%E7%BA%BF%E7%A8%8B/">多线程</a>(3)</li><li><a href="https://www.cnblogs.com/flytrace/tag/%E7%AD%96%E7%95%A5/">策略</a>(3)</li><li><a href="https://www.cnblogs.com/flytrace/tag/">更多</a></li>
+</ul>
+</div>
+</div></div><div id="sidebar_categories">
+		<div id="cell">
+		<img src="./写给笨人的法线贴图原理 - 饭后温柔 - 博客园_files/icon-group.jpg" hspace="5" align="left" vspace="2"><h3>随笔档案</h3>
+		
+				<ul>
+			
+				<li><a id="CatList_LinkList_0_Link_0" href="https://www.cnblogs.com/flytrace/archive/2018/02.html">2018年2月 (1)</a>
+				</li>
+			
+				<li><a id="CatList_LinkList_0_Link_1" href="https://www.cnblogs.com/flytrace/archive/2017/08.html">2017年8月 (2)</a>
+				</li>
+			
+				<li><a id="CatList_LinkList_0_Link_2" href="https://www.cnblogs.com/flytrace/archive/2017/07.html">2017年7月 (2)</a>
+				</li>
+			
+				<li><a id="CatList_LinkList_0_Link_3" href="https://www.cnblogs.com/flytrace/archive/2017/06.html">2017年6月 (4)</a>
+				</li>
+			
+				<li><a id="CatList_LinkList_0_Link_4" href="https://www.cnblogs.com/flytrace/archive/2016/06.html">2016年6月 (3)</a>
+				</li>
+			
+				<li><a id="CatList_LinkList_0_Link_5" href="https://www.cnblogs.com/flytrace/archive/2014/10.html">2014年10月 (2)</a>
+				</li>
+			
+				<li><a id="CatList_LinkList_0_Link_6" href="https://www.cnblogs.com/flytrace/archive/2014/04.html">2014年4月 (1)</a>
+				</li>
+			
+				<li><a id="CatList_LinkList_0_Link_7" href="https://www.cnblogs.com/flytrace/archive/2014/03.html">2014年3月 (2)</a>
+				</li>
+			
+				<li><a id="CatList_LinkList_0_Link_8" href="https://www.cnblogs.com/flytrace/archive/2014/02.html">2014年2月 (3)</a>
+				</li>
+			
+				<li><a id="CatList_LinkList_0_Link_9" href="https://www.cnblogs.com/flytrace/archive/2013/11.html">2013年11月 (1)</a>
+				</li>
+			
+				<li><a id="CatList_LinkList_0_Link_10" href="https://www.cnblogs.com/flytrace/archive/2013/10.html">2013年10月 (4)</a>
+				</li>
+			
+				<li><a id="CatList_LinkList_0_Link_11" href="https://www.cnblogs.com/flytrace/archive/2013/08.html">2013年8月 (7)</a>
+				</li>
+			
+				<li><a id="CatList_LinkList_0_Link_12" href="https://www.cnblogs.com/flytrace/archive/2013/06.html">2013年6月 (2)</a>
+				</li>
+			
+				<li><a id="CatList_LinkList_0_Link_13" href="https://www.cnblogs.com/flytrace/archive/2013/05.html">2013年5月 (1)</a>
+				</li>
+			
+				<li><a id="CatList_LinkList_0_Link_14" href="https://www.cnblogs.com/flytrace/archive/2013/04.html">2013年4月 (2)</a>
+				</li>
+			
+				<li><a id="CatList_LinkList_0_Link_15" href="https://www.cnblogs.com/flytrace/archive/2013/03.html">2013年3月 (2)</a>
+				</li>
+			
+				<li><a id="CatList_LinkList_0_Link_16" href="https://www.cnblogs.com/flytrace/archive/2013/02.html">2013年2月 (4)</a>
+				</li>
+			
+				<li><a id="CatList_LinkList_0_Link_17" href="https://www.cnblogs.com/flytrace/archive/2013/01.html">2013年1月 (1)</a>
+				</li>
+			
+				<li><a id="CatList_LinkList_0_Link_18" href="https://www.cnblogs.com/flytrace/archive/2012/11.html">2012年11月 (1)</a>
+				</li>
+			
+				<li><a id="CatList_LinkList_0_Link_19" href="https://www.cnblogs.com/flytrace/archive/2012/09.html">2012年9月 (3)</a>
+				</li>
+			
+				<li><a id="CatList_LinkList_0_Link_20" href="https://www.cnblogs.com/flytrace/archive/2012/07.html">2012年7月 (1)</a>
+				</li>
+			
+				<li><a id="CatList_LinkList_0_Link_21" href="https://www.cnblogs.com/flytrace/archive/2012/05.html">2012年5月 (2)</a>
+				</li>
+			
+				<li><a id="CatList_LinkList_0_Link_22" href="https://www.cnblogs.com/flytrace/archive/2012/02.html">2012年2月 (2)</a>
+				</li>
+			
+				<li><a id="CatList_LinkList_0_Link_23" href="https://www.cnblogs.com/flytrace/archive/2012/01.html">2012年1月 (4)</a>
+				</li>
+			
+				<li><a id="CatList_LinkList_0_Link_24" href="https://www.cnblogs.com/flytrace/archive/2011/11.html">2011年11月 (1)</a>
+				</li>
+			
+				<li><a id="CatList_LinkList_0_Link_25" href="https://www.cnblogs.com/flytrace/archive/2011/10.html">2011年10月 (4)</a>
+				</li>
+			
+				<li><a id="CatList_LinkList_0_Link_26" href="https://www.cnblogs.com/flytrace/archive/2011/09.html">2011年9月 (3)</a>
+				</li>
+			
+				<li><a id="CatList_LinkList_0_Link_27" href="https://www.cnblogs.com/flytrace/archive/2011/08.html">2011年8月 (5)</a>
+				</li>
+			
+				<li><a id="CatList_LinkList_0_Link_28" href="https://www.cnblogs.com/flytrace/archive/2011/04.html">2011年4月 (1)</a>
+				</li>
+			
+				<li><a id="CatList_LinkList_0_Link_29" href="https://www.cnblogs.com/flytrace/archive/2011/03.html">2011年3月 (1)</a>
+				</li>
+			
+				</ul>
+			</div>
+	
+		<div id="cell">
+		<img src="./写给笨人的法线贴图原理 - 饭后温柔 - 博客园_files/icon-group.jpg" hspace="5" align="left" vspace="2"><h3>文章分类</h3>
+		
+				<ul>
+			
+				<li><a id="CatList_LinkList_1_Link_0" href="https://www.cnblogs.com/flytrace/category/286207.html">拾人牙慧</a>
+				</li>
+			
+				<li><a id="CatList_LinkList_1_Link_1" href="https://www.cnblogs.com/flytrace/category/286220.html">星辰大海(2)</a>
+				</li>
+			
+				<li><a id="CatList_LinkList_1_Link_2" href="https://www.cnblogs.com/flytrace/category/286214.html">学海拾贝(12)</a>
+				</li>
+			
+				</ul>
+			</div>
+	</div><div id="recent_comments_wrap">
+    <div id="cell">
+        <img src="./写给笨人的法线贴图原理 - 饭后温柔 - 博客园_files/icon-group.jpg" hspace="5" align="left" vspace="2">
+        <h3>最新评论</h3>
+        <div class="RecentComment">
+            <div id="RecentCommentsBlock"><ul>
+        <li class="recent_comment_title"><a href="https://www.cnblogs.com/flytrace/p/7128003.html#3906998">1. Re:lua版本的一个状态机</a></li>
+        <li class="recent_comment_body">不是 game_update <br>是 event_tolobby</li>
+        <li class="recent_comment_author">--MonkeyKingMKY</li>
+        <li class="recent_comment_title"><a href="https://www.cnblogs.com/flytrace/p/7128003.html#3906994">2. Re:lua版本的一个状态机</a></li>
+        <li class="recent_comment_body">game_update<br>中的 <br>gamemain_lobby_state <br>为什么 没有 触发一堆 enter 和 exit 而产生的额输出呢？</li>
+        <li class="recent_comment_author">--MonkeyKingMKY</li>
+        <li class="recent_comment_title"><a href="https://www.cnblogs.com/flytrace/p/7128003.html#3906895">3. Re:lua版本的一个状态机</a></li>
+        <li class="recent_comment_body">缺少<br> middleclass<br>sc_helper<br>sc_event<br>而且 一堆 书写上的 缩写， 下划线......</li>
+        <li class="recent_comment_author">--MonkeyKingMKY</li>
+        <li class="recent_comment_title"><a href="https://www.cnblogs.com/flytrace/p/3418817.html#3563455">4. Re:坑爹的gltools编译错误解决</a></li>
+        <li class="recent_comment_body">至今还没配好环境，我想放弃了</li>
+        <li class="recent_comment_author">--RunningXie</li>
+        <li class="recent_comment_title"><a href="https://www.cnblogs.com/flytrace/p/3418817.html#3331508">5. Re:坑爹的gltools编译错误解决</a></li>
+        <li class="recent_comment_body">我好几次碰到这个问题了，每次都纠结，都没有解决，好不开心。</li>
+        <li class="recent_comment_author">--四叶留誓</li>
+</ul>
+</div>
+        </div>
+    </div>
+</div>
+<div id="topview_posts_wrap">
+    <div id="cell">
+        <img src="./写给笨人的法线贴图原理 - 饭后温柔 - 博客园_files/icon-group.jpg" hspace="5" align="left" vspace="2">
+        <h3>阅读排行榜</h3>
+        <div class="RecentComment">
+            <div id="TopViewPostsBlock"><ul><li><a href="https://www.cnblogs.com/flytrace/p/3387748.html">1. 写给笨人的法线贴图原理(46759)</a></li><li><a href="https://www.cnblogs.com/flytrace/p/3395911.html">2. 一个有趣的模拟光照的shader(类似法线贴图)(14171)</a></li><li><a href="https://www.cnblogs.com/flytrace/archive/2011/03/04/1971017.html">3. windows+apache+mysql+django+mod_wsgi安装(6334)</a></li><li><a href="https://www.cnblogs.com/flytrace/p/3379816.html">4. 法线从object space到eye space的转换((normal matrix)(5455)</a></li><li><a href="https://www.cnblogs.com/flytrace/archive/2013/04/02/2995352.html">5. unity3d笔记二:基于组件的设计(3711)</a></li></ul></div>
+        </div>
+    </div>
+</div><div id="topfeedback_posts_wrap">
+    <div id="cell">
+        <img src="./写给笨人的法线贴图原理 - 饭后温柔 - 博客园_files/icon-group.jpg" hspace="5" align="left" vspace="2">
+        <h3>评论排行榜</h3>
+        <div class="RecentComment">
+            <div id="TopFeedbackPostsBlock"><ul><li><a href="https://www.cnblogs.com/flytrace/archive/2012/01/01/2309248.html">1. 艾尔之光中刀光的ogre实现(15)</a></li><li><a href="https://www.cnblogs.com/flytrace/p/3574647.html">2. c++11 tuple实现(8)</a></li><li><a href="https://www.cnblogs.com/flytrace/p/3551414.html">3. 使用c++11改写loki的TypeList(7)</a></li><li><a href="https://www.cnblogs.com/flytrace/p/3568211.html">4. c++11 function_typetraits备忘(3)</a></li><li><a href="https://www.cnblogs.com/flytrace/archive/2013/02/23/2923024.html">5. 备忘:c#接口与抽象类(3)</a></li></ul></div>
+        </div>
+    </div>    
+</div>
+<div id="sidebar_topdiggedposts" class="sidebar-block"><div id="topdigg_posts_wrap">
+<div id="cell">
+<img src="./写给笨人的法线贴图原理 - 饭后温柔 - 博客园_files/icon-group.jpg" hspace="5" align="left" vspace="2"><h3>推荐排行榜</h3>
+<div class="RecentComment">
+	<div id="TopDiggPostsBlock"><ul><li><a href="https://www.cnblogs.com/flytrace/p/3387748.html">1. 写给笨人的法线贴图原理(9)</a></li><li><a href="https://www.cnblogs.com/flytrace/p/3551414.html">2. 使用c++11改写loki的TypeList(4)</a></li><li><a href="https://www.cnblogs.com/flytrace/p/3574647.html">3. c++11 tuple实现(3)</a></li><li><a href="https://www.cnblogs.com/flytrace/archive/2013/02/23/2923024.html">4. 备忘:c#接口与抽象类(2)</a></li><li><a href="https://www.cnblogs.com/flytrace/archive/2011/03/04/1971017.html">5. windows+apache+mysql+django+mod_wsgi安装(2)</a></li></ul></div>
+</div>
+</div></div></div></div><script type="text/javascript">loadBlogSideColumn();</script>
+			</div>
+		</td>
+		<td class="MainCell">
+			<div id="main">
+				
+        <div id="post_detail">
+	<div class="post">
+		<div class="posthead">
+			<h2>
+				<a id="cb_post_title_url" class="singleposttitle" href="https://www.cnblogs.com/flytrace/p/3387748.html">写给笨人的法线贴图原理</a>
+			</h2>
+ 			Posted on <span id="post-date">2013-10-25 13:43</span> <a href="https://www.cnblogs.com/flytrace/">饭后温柔</a> 阅读(<span id="post_view_count">46761</span>) 评论(<span id="post_comment_count">0</span>)  <a href="https://i.cnblogs.com/EditPosts.aspx?postid=3387748" rel="nofollow">编辑</a> <a href="https://www.cnblogs.com/flytrace/p/3387748.html#" onclick="AddToWz(3387748);return false;">收藏</a>
+			<script type="text/javascript">var allowComments=false,cb_blogId=84674,cb_entryId=3387748,cb_blogApp=currentBlogApp,cb_blogUserGuid='0c2a9f06-8945-e011-ac81-842b2b196315',cb_entryCreatedDate='2013/10/25 13:43:00';loadViewCount(cb_entryId);var cb_postType=1;var isMarkdown=false;</script>
+			
+		</div>
+		<div class="postbody"><div id="cnblogs_post_body" class="blogpost-body"><p>　　我算个笨人吧.笨人以前弄懂一些东西后,讲给笨人听往往更有效.看之前请自行具备图形学关于光照的基础知识.</p>
+<p>　　&gt;&gt;　　<strong>world/object space normal map</strong></p>
+<p>　　我们先讲基于世界或模型坐标的法线贴图(world/object space normal map).不常用,但是基础.</p>
+<p>　　首先,请无视你之前google到的所谓通过Photoshop生成法线贴图类似文章,美术除外.那只是一种利用近似hack的手法利用法线贴图原理.无助于理解真正的过程.不过看完这文章后,你应能理解Photoshop的这种做法的来历.</p>
+<p>　　不搞清法线贴图的生成原理,是无法正确理解之后shader中的计算使用的.法线贴图的出现,是为了低面数的模型模拟出高面数的模型的"<strong>光照信息</strong>".光照信息最重要的当然是光入射方向与入射点的法线夹角.法线贴图本质上就是记录了这个夹角的相关信息.光照的计算与某个面上的法线方向息息相关.</p>
+<p>　　我们知道计算机里的模型,是通过多个多边形面组合来近似模拟一个物体的.它不是圆滑的.面数越多,则越接近真实物体.光照到某个面当中的一点时,法线是通过这个面的几个顶点通过插值得到的.插值其实也是为了模拟这个点"正确"的法线方向,不然整个面所有点的法线一致的话,光照上去,我们看到的模型夸张点就像一面面镜子拼接起来了.但法线插值不可避免的仍然会失真.模型的面数越高,失真的程度自然越小.要是能无限细分到人眼看不出的地步,根本不用插值了.</p>
+<p>　　面数高,需要计算的量和内存需求就高.前辈找到了法线贴图(前身是凹凸贴图)这个办法,使低模能够近似享受高模的光照细节信息.代价是有的,就是需要一个记录这些信息的文件.这是程序中常用的存储空间换计算时间的做法.3D程序中偏爱使用这个手法.谁叫存储硬件的单位价格比计算硬件的单位价格降低速度快很多呢.</p>
+<p>　　显卡包括包括与之相辅的图形api,读的数据最初来源是图片.所以记录这个信息的文件就被我们保存为图片格式.法线贴图后边2个字就这么来的.很好你已经明白一半了.</p>
+<p>　　我们再来弄清另一半.</p>
+<p>　　因为面数少,低模上某个区域的一个面,可能就是高模上相同区域的几个面.看下图的高模与低模的对比(为了简便我们抽象为2维的线段)</p>
+<p>　　<img src="./写给笨人的法线贴图原理 - 饭后温柔 - 博客园_files/22020239-a0b66efea3354d8d9a3e5af7ffc627fb.png" alt=""></p>
+<p>　　上边凹凹凸凸的曲线表示高模.下边比较平滑的表示低模.因为高模细节多,所以在某段区域它的方向变化自然比平平板板的低模多.上图看不懂我表示无能为力.</p>
+<p>　　看到这图,一些人应该有所感觉了.没感觉也不要紧,接下再来.</p>
+<p>　　不管高模还是低模,反正最后还是要被上色的.假设模型已经被渲染完成有颜色了,现在我们想象用剪刀把模型展开(类似给动物扒皮的过程),得到2张差不多一样大小的皮,毕竟面积不会差太多.高模的皮当然肤白体嫩精度高,低模的皮就有些糙了.现在再想象这么个过程:逐渐把高模的皮移到低模的皮上方一定高度直到水平重叠.</p>
+<p>　　现在这个样子你有感觉没有?没感觉也不要紧,接下再来.</p>
+<p>　　虽然模型精度不一样,无论如何,这2张皮每一点都是有颜色了的(插值的功劳).两张皮上相同一点的颜色,高模这张皮上的更真实,因为在计算最终颜色信息所依赖的法线,高模上的<span>点比低模上的点更精确.我们如何给低模这张皮美容,使它能够接近高模的效果呢?换句话说,找到办法,使土肥圆演变为黑木耳,质变为白富美是不可能的,那得下辈子.</span></p>
+<p>　　办法很暴力.现在再想象你用一根针,从上往下,刺穿高模的皮,再刺到低模的皮.保证针垂直,这样就刺到同一点了.再想象如果这针有魔力的话,它刺穿高模皮的过程中,盗取了一些信息,传送到低模皮上边.低模皮依靠这些信息计算,成功蜕变为黑木耳.这些信息是什么呢?当然是法线信息了.现在<span>高模这张皮被密密麻麻插满了针眼,换句话说,保存高模泄漏来的信息,必定是点对点的.即这张皮上的每个点,都得被保存.所以法线贴图跟原始的贴图是一样大小的,贴图内每个点都保存了对应高模某个点的法线信息.实际的计算,只会关心由贴图里得来的法线信息,低模上的那些法线,被抛弃了.</span></p>
+<p><span>　　现在这个样子你有感觉没有?没感觉也不要紧,接下再来.</span></p>
+<p>　　如何赋予这根针魔力呢?宅男们,甘道夫是帮不了你的忙的.伟哥也帮不了你.只有数学,才能拯救世界...</p>
+<p>　　为什么我之前强调垂直呢?不只是为针能扎到同一点.现在请把这个过程,想象到上图中.图中的箭头,表示高模上某个点的法线方向.如何记录这个方向信息?现在请想象逐渐把高模和低模重叠在一起,为了方便想象,低模小一些被高模包住了.或者你干脆想象高模的面在低模面的正上方,或一个圆球里有一个内切的正多面体.再想象有一束光线(针的等价物),从上往下照射,把高模上的法线投射到低模上.</p>
+<p>　　现在你有感觉了吧.</p>
+<p>　　前戏大功告成,现在我们来处理稍微细节些的问题了.这是一个投影过程.但是影子是2维的啊?向量是由x,y,z三个分量构成的.高模上某点投影到低模上对应点所在平面,只剩2个分量的投影了.好比我们现在只知道法线在x-y平面的投影方向,那在z轴的方向呢?只要我们确保投影前法线是单位向量,那很简单z=1-x*x-y*y.这样我们还可以省下保存z的空间.其实我们既然已经知道这个法线方向(高模object space内的法线方向),而且被单位化了,直接保存也是可以的.投影过程只是个思想实验,实际是不会有什么光线由上到下投射的.</p>
+<p>　　到此可以明确了,"正统"的法线贴图生成,是高模,低模不可缺一的.因为没有高模就不知道法线方向,没有低模,就不知道高模上某点的法线对应于低模上哪个点.</p>
+<p>　　因为某点的法线信息是被保存到法线贴图上对应像素点的.实际计算是把法线x,y,z方向大小映射到颜色空间rgb里.就是把x值存在r里,把y值存在g里,把z值存在b里.因为rgb是8字节为单位的.所以高模的法线信息存储到像素里是要丢失精度的.而且前面计算高模与低模对应点也不可能完全匹配到,本来就是个模拟过程.自然法线贴图也不是无敌的.</p>
+<p>　　现在我们可以回答之前的Photoshop根据diffuse贴图生成法线贴图的问题了.实际的diffuse贴图是根本没有包含模型上的法线信息的.因此它根据diffuse贴图得出的法线贴图根本就是错误的.但为什么能够应用呢?请想象高模的精度高的吓人,高到渲染后把高模皮扒下来后,就成了一张照片.再想象之前高模上的贴图是布满了铁锈.于是你就得到了一张铁锈照片.Photoshop处理这张铁锈照片,其实是根据一些算法(sobel等等)把颜色值转化为梯度值,近似模拟了法线.因为我们其实不关心铁锈的精确分布,像那么一回事就可以了,所以这种情况下如此处理是可以将就的,坑坑洼洼效果最适合如此做法.photoshop这种脱离高模低模的做法容易让人迷惑,导致新手以为法线是从diffuse贴图上来的,或者干脆被阻断了思路.</p>
+<p>　　我们上边计算法线贴图所用到的法线,又是从哪里来的.如果这个法线方向,是处于世界坐标中的(world space),那称为world space normal.如果是处于物体本身局部坐标中的,那称为object space normal.很容易想象,world space normal一旦从贴图里解压出来后,就可以直接用了,效率很高.但是有个缺点,这个world space normal 是固定了,如果物体没有保持原来的方向和位置,那原来生成的normal map就作废了.因此又有人保存了object space normal.它从贴图里解压,还需要乘以model-view矩阵转换到世界坐标,或者转换到其他坐标取决于计算过程及需求.object space normal生成的贴图,物体可以被旋转和位移.基本让人满意.但仍有一个缺点.就是一张贴图只能对应特定的一个模型,模型不能有变形(deform).</p>
+<p>&gt;&gt;　　<strong>tangent space normal map</strong></p>
+<p>　　为解决适应变形的normal map,我们仍能从这两种方法中得到启示.world space normal直接保存的是世界坐标系中的高模法线方向.因此低模取出该点法线就可以直接使用,前提是低模的世界坐标系与高模一致,一点旋转都不能有,不然法线方向就改变了.object space normal保存的是模型空间坐标系中的高模方向,低模取出该点取出来法线,还需要乘以所在的model-view矩阵,转化为低模的世界坐标系中的方向,也就是说低模端还需要做一个运算.因此即使低模任意旋转也不怕,有model-view矩阵可以把法线贴图中的值转换两者效率由高到低,灵活度由低到高.问题来了,我们是否能找到高模上的另外一个坐标系统,使低模变形也时也能较正确的变换法线到世界坐标系中?</p>
+<p>　　我们考察一下object space.当一个低模旋转时,因为是刚体不变形,相当于每个点都乘以一个旋转矩阵R,之后各点关系保持不变.实际上,我们保持物体不旋转,将object space的坐标系(x,y,z三个轴)旋转,得到的结果是一样的.这个关系相信大家都能理解.换句话说,法线针对于object space是固定不动的,物体保持在object space固定,只管跟随坐标系的移动,旋转就行了.现在我们想象低模的某个点需要变形时,那原则上也可以通过让object space坐标系乘以某个变形矩阵T来达到.但是不同的点有不同的变形,不可能存在一个矩阵T即适合这个点又适合这个点.因此object space坐标系是不能用的.会有哪个单一的坐标系能存在一个所有点都共用的变形矩阵吗?显然无法想象.</p>
+<p>　　变形时,顶点关系改变了,即面的形状,方向改变了.如果面上存在一个固定的坐标系,那当物体变形,移动,旋转时,这个坐标系必定跟着面一起运动,那么在这个坐标系里的某个点或向量(比如我们把高模法线转换到这个坐标系里),不需要变动.当整个面发生变化时,我们只需要计算面上的坐标系到世界坐标系的转换矩阵,那么定义在这个面上的点或坐标(固定的),乘以这个矩阵即可得到在世界中的坐标.这个坐标如何构造目前对我们不重要,请务必理解这个概念.我们不过是寻求一个局部坐标系,局部坐标系中的点坐标,乘以局部坐标系到世界坐标系的转换矩阵(这个矩阵是低模渲染时动态计算的的),得到局部坐标系中的点在世界坐标系中的坐标.这样法线贴图中存储的固定的值(法线方向),才能进行有意义的计算.</p>
+<p>　　看到这里很明显的,这种做法需要数千个不同的定义在面上的坐标系.低模上有多少个面,就得有多少个这样的坐标系.这种方法的计算量自然是比object space normal map要大一些的.在低模的每个面上,要构造出这个坐标系.这个坐标系术语里称为tangent space.</p>
+<p>　　<strong>object space normal map的中,低模的object space坐标系与高模中的object space坐标系是重合的.所以不需要构建,所以低模上某点才能直接用高模的法线替换自己的法线.坐标系重合这个概念很重要.新方法中,低模上的这个tangent space,也必须与高模上的坐标系tangent space.因为低模上的一个面,可能对应了高模上的几个面(精度高),按照新方法每个面都有一个局部坐标系,那对于低模上的每个面,高模因为存在好几个面,就会出现好几个局部坐标系,这肯定是不行的.所以高模所用的tangent space,就是低模上的.生成法线贴图,必定会确认高模上哪些面都对应低模上的哪个面,然后高模上的这几个面的法线,都会转换为低模这个面上所构建的tangent space的坐标.这样,当低模变形时,即三角面变化时,它的tangent space也会跟着变化,保存在贴图里的法线乘以低模这个面的tangent space到外部坐标系的转换矩阵即可得到外部坐标.顺便再提一点,高模保存的这个法线,是高模上object space里的法线,看到这里你该明白这是自然而然的.你搜索文章时可能会看到什么把光转换到tangent space里,确保处于同一个坐标系下的话.确实是这样.但初次接触却还是模糊.我以为确保tangent sapce重合及做法,才是让人顿悟tangent space的诀窍点.</strong></p>
+<p>　　<img src="./写给笨人的法线贴图原理 - 饭后温柔 - 博客园_files/26011616-6fe1f456a1b94c408c883ab302c59f99.png" alt=""></p>
+<p>　　上图稍微清楚一些了.曲线表示高模,P点处有TBN坐标系.线段表示低模,M点处有T'B'M坐标系.高模上P点处的法线转换到TBN坐标里,与N的夹角为NPN'.低模处取出这个法线为N'',与低模的PM(面法线)夹角为PMN''.可以看到这2个夹角是近似的.所以渲染时高模上的法线,是基于低模上的这个坐标系运算的.</p>
+<p>　　当我自己想到上边这段话时,tangent space的法线贴图原理就豁然开朗了.接下来我们构建这个tangent space坐标系.</p>
+<p>　　面在动时,tangent space也得跟着动.面上的垂直法线是跟着动的,因此这个法线N可以作为tangent space的一个坐标轴.<strong>非常非常需要注意的是,这里所说的面上垂直法线,不是指插值所得来的法线,那个法线正是是我们需要保存的内容.N单纯就是指垂直于这个面的方向.</strong></p>
+<p>　　<img src="./写给笨人的法线贴图原理 - 饭后温柔 - 博客园_files/23184746-e1fe67cd89ba400ca41fcbd641553fe4.jpg" alt="">&nbsp;</p>
+<p>　　我们考察上图,对于一个三角面,它的边V2V1,V3V1,V3V2我们总是能够确定的.边也定会在变形时跟着动.因此我们可以选择一条边作为tangent space的第二个坐标轴T.第三个坐标轴就简单了,直接根据叉积来B=T * N.这个坐标轴就订好了.其实,坐标轴的选定几乎可以是任意的,只要你能够确保每次都能构建出来.比如你可以先选择V1V3,V1V2作为坐标轴,N=V1V3 * V1V2.这里N恰好和前面一样方向.但如此一来这个坐标系中V1V2,V1V3不是垂直的,不正交的坐标基在矩阵运算中是不方便的,还得正交化.因此我们选择第一种最直观最清晰最方便的方法.</p>
+<p>　　既然三个坐标轴都确定了,那构建object space到tangent space的矩阵O-TBN就简单了,我们把T,B,N单位化,分别作为tangent space的x,y,z轴.根据三个坐标基我们构造矩阵如下:</p>
+<p>　　O-TBN =&nbsp;<img src="./写给笨人的法线贴图原理 - 饭后温柔 - 博客园_files/25021122-86ffeb67ff1349c8a840cc48ae25a6e9.png" alt="">&nbsp;&nbsp;</p>
+<p>　　<strong>高模上object space内的某点法线(不会是world space的,否则旋转就露相),乘以这个矩阵,即得到tangent space内的法线方向,再把这个值映射到rgb空间,存为贴图即可.</strong>这个矩阵为什么是这样,这是题外话了.我简略说一下:object space的三个坐标轴(1,0,0),(0,1,0),(0,0,1)乘以这个矩阵,必须刚好为tangent space中的坐标轴,很自然矩阵就是上边的样子.而object space其他点的坐标都是x,y,z三个单位坐标的线性组合.所以这个矩阵对于其他点必定是正确的.</p>
+<p>　　实际上在vertex shader中,我们只能知道当前顶点的信息,三角形的另外两个顶点我们是不知道的.但现代的shader能够为顶点提供一个tangent信息,表示在顶点处的切线.你可以想象一个足球上经过某点的切线.因此我们会把顶点的tangent方向作为上边的T向量.这也是tangent space叫这个名称的由来.<span>你会看到很多文章中提到纹理的u,v方向.因为面上某点的u,v是沿各条边线性插值的,所以u,v方向与边的方向相同.其实我们现在已经有现成的tangent可以用了.</span></p>
+<p><span>　　现在我们可以分析为什么tangent space法线贴图是偏蓝色了.因为对于高模上的面来说,因为精度太高(面很小,而且周围的面相对它的方向很平滑),所以这个面渲染时计算机认为这个面的"弯曲"程度很小,即面上各个点插值得来的法线相互间偏差很小.基本跟整个面的垂直方向不会差太多.因此在tangent space里,这些法线都跟z轴偏差较小.而z轴是被保存在贴图里的b字节处(蓝色通道)里.所以贴图显示出来的颜色就偏蓝了.</span></p>
+<p>&nbsp;　　好了,现在高模面上各点的法线值,都转换为低模上的tangent space坐标了.现在我们考虑具体的低模上的渲染计算了.假设在低模上的某个面我们计算出了这个矩阵,并取出了面上某点的对应在法线贴图里法线值.现在需要计算光照.我们可以把光向量转换到tangent space里做计算.也可以把得到的法向量转换到world space与光向量进行计算.结果是一样的.实际考量,你会发现后一种方法不好.因为对于面上的每个点,都要计算一次normal到world space的准换.而前一种方法,对一个面上的所有点,只要计算一次光向量到tangent space的计算.然后再考虑到vertex shader与fragment shader的流程,你会发现刚好我们可以在vertex shader计算光线到tangent space的转换,在fragment sader取出法线值与前面得到的tangent space里的光线方向做计算即可.这里提醒一下,一般verteix shader中我们得到的光线方向是基于world space的,而法线贴图保存的是高模的object space内的方向然后再转换到tangent space,所以在vertex shader中,我们必须先把光线先转换到object space,再转换到tangent space.这样才能保证最终计算时,光线与法线是基于同一个坐标系的.这也是你在很多normal map的shader里,看到类似ToOjectSpaceDir(lightDir)之类函数的原因,正是要把光转换到object space.</p>
+<p>&nbsp; &nbsp; &nbsp; 这里当然损失了精度，因为我们实际上是用低模上的T'B'坐标系，代替了高模上的TBN坐标系。但贴图中的法线使用低模切线空间得出的微小扰动，仍然比原来正常的线性插值法线效果要好。</p>
+<p>　　实际做法可能会有些复杂.比如有些模型是镜像对称,贴图也是镜像对称的,计算时会省去另一半等等.这时如何处理看具体的法线贴图生成软件和处理它的引擎(shader)了.基本原理还是上边所说的.</p>
+<p>　　tangent space normal map适应变形的这种能力,使它不仅能够应用在原来的模型上边,甚至可以应用在变形严重的不同模型上.即法线贴图有一定的脱离原来模型使用的能力.比如你模拟出了一个高精度的粗糙花岗岩平板表面,得出的法线贴图可以应用到圆柱模型上边.类似photoshop的直接根据花岗岩表面照片生成法线贴图也是能够使用的.因为目地就是为了微小的扰动法线生成凹凸不平的表面.虽然这个表面并不是正确的还原一个真正存在的花岗岩表面.但图形学不就是一个模拟过程,能足够真实的欺骗我们的眼睛就行.其实这种粗糙表面微小扰动只是应用之一.你搜到一些处理的好的图片,不仔细看你会发现低模的怪物会以假乱真体现出高模才有的平滑弯曲.</p>
+<p>　　以上是法线贴图的原理.因为该原理的应用范围很广,也能够串起很多知识点,是非常值得搞清楚的.我当初在学习法线贴图过程中,没有看到能够讲的让我清晰明白整个过程的.遂作此篇.</p>
+<p>　　这是本篇文章的引用来源之一:</p>
+<p>　　<a href="http://www.gamasutra.com/view/feature/129939/messing_with_tangent_space.php?print=1">http://www.gamasutra.com/view/feature/129939/messing_with_tangent_space.php?print=1</a></p></div><div id="MySignature"></div>
+<div class="clear"></div>
+<div id="blog_post_info_block">
+<div id="BlogPostCategory"></div>
+<div id="EntryTag">标签: <a href="https://www.cnblogs.com/flytrace/tag/3d/">3d</a>, <a href="https://www.cnblogs.com/flytrace/tag/shader/">shader</a>, <a href="https://www.cnblogs.com/flytrace/tag/%E6%B3%95%E7%BA%BF%E8%B4%B4%E5%9B%BE/">法线贴图</a></div>
+<div id="blog_post_info"><div id="green_channel">
+        <a href="javascript:void(0);" id="green_channel_digg" onclick="DiggIt(3387748,cb_blogId,1);green_channel_success(this,&#39;谢谢推荐！&#39;);">好文要顶</a>
+            <a id="green_channel_follow" onclick="follow(&#39;0c2a9f06-8945-e011-ac81-842b2b196315&#39;);" href="javascript:void(0);">关注我</a>
+    <a id="green_channel_favorite" onclick="AddToWz(cb_entryId);return false;" href="javascript:void(0);">收藏该文</a>
+    <a id="green_channel_weibo" href="javascript:void(0);" title="分享至新浪微博" onclick="ShareToTsina()"><img src="./写给笨人的法线贴图原理 - 饭后温柔 - 博客园_files/icon_weibo_24.png" alt=""></a>
+    <a id="green_channel_wechat" href="javascript:void(0);" title="分享至微信" onclick="shareOnWechat()"><img src="./写给笨人的法线贴图原理 - 饭后温柔 - 博客园_files/wechat.png" alt=""></a>
+</div>
+<div id="author_profile">
+    <div id="author_profile_info" class="author_profile_info">
+            <a href="https://home.cnblogs.com/u/flytrace/" target="_blank"><img src="./写给笨人的法线贴图原理 - 饭后温柔 - 博客园_files/20170826211015.png" class="author_avatar" alt=""></a>
+        <div id="author_profile_detail" class="author_profile_info">
+            <a href="https://home.cnblogs.com/u/flytrace/">饭后温柔</a><br>
+            <a href="https://home.cnblogs.com/u/flytrace/followees">关注 - 7</a><br>
+            <a href="https://home.cnblogs.com/u/flytrace/followers">粉丝 - 29</a>
+        </div>
+    </div>
+    <div class="clear"></div>
+    <div id="author_profile_honor"></div>
+    <div id="author_profile_follow">
+                <a href="javascript:void(0);" onclick="follow(&#39;0c2a9f06-8945-e011-ac81-842b2b196315&#39;);return false;">+加关注</a>
+    </div>
+</div>
+<div id="div_digg">
+    <div class="diggit" onclick="votePost(3387748,&#39;Digg&#39;)">
+        <span class="diggnum" id="digg_count">9</span>
+    </div>
+    <div class="buryit" onclick="votePost(3387748,&#39;Bury&#39;)">
+        <span class="burynum" id="bury_count">0</span>
+    </div>
+    <div class="clear"></div>
+    <div class="diggword" id="digg_tips">
+    </div>
+</div>
+<script type="text/javascript">
+    currentDiggType = 0;
+</script></div>
+<div class="clear"></div>
+<div id="post_next_prev"><a href="https://www.cnblogs.com/flytrace/p/3379816.html" class="p_n_p_prefix">« </a> 上一篇：<a href="https://www.cnblogs.com/flytrace/p/3379816.html" title="发布于2013-10-21 01:07">法线从object space到eye space的转换((normal matrix)</a><br><a href="https://www.cnblogs.com/flytrace/p/3395911.html" class="p_n_p_prefix">» </a> 下一篇：<a href="https://www.cnblogs.com/flytrace/p/3395911.html" title="发布于2013-10-30 04:25">一个有趣的模拟光照的shader(类似法线贴图)</a><br></div>
+</div>
+
+</div>
+	</div></div><a name="!comments"></a><div id="blog-comments-placeholder"></div><script type="text/javascript">var commentManager = new blogCommentManager();commentManager.renderComments(0);</script>
+<div id="comment_form" class="commentform">
+<a name="commentform"></a>
+<div id="divCommentShow"></div>
+<div id="comment_nav"><span id="span_refresh_tips"></span><a href="javascript:void(0);" onclick="return RefreshCommentList();" id="lnk_RefreshComments" runat="server" clientidmode="Static">刷新评论</a><a href="https://www.cnblogs.com/flytrace/p/3387748.html#" onclick="return RefreshPage();">刷新页面</a><a href="https://www.cnblogs.com/flytrace/p/3387748.html#top">返回顶部</a></div>
+<div id="comment_form_container">（评论功能已被禁用）</div>
+<div class="ad_text_commentbox" id="ad_text_under_commentbox"></div>
+<div id="ad_t2"><a href="http://www.ucancode.com/index.htm" target="_blank" onclick="ga(&#39;send&#39;, &#39;event&#39;, &#39;Link&#39;, &#39;click&#39;, &#39;T2-工控&#39;)">【推荐】超50万C++/C#源码: 大型实时仿真组态图形源码</a><br><a href="https://www.grapecity.com.cn/developer/spreadjs?utm_source=cnblogs&amp;utm_medium=blogpage&amp;utm_term=bottom&amp;utm_content=SpreadJS&amp;utm_campaign=community" target="_blank" onclick="ga(&#39;send&#39;, &#39;event&#39;, &#39;Link&#39;, &#39;click&#39;, &#39;T2-SpreadJS&#39;)">【前端】SpreadJS表格控件，可嵌入系统开发的在线Excel</a><br><a href="https://ke.qq.com/adActivity.html?name=xiangxueketang2" target="_blank" onclick="ga(&#39;send&#39;, &#39;event&#39;, &#39;Link&#39;, &#39;click&#39;, &#39;T2-享学&#39;)">【培训】阿里P8面试官：什么样的人能进阿里</a><br><a href="https://q.cnblogs.com/" target="_blank" onclick="ga(&#39;send&#39;, &#39;event&#39;, &#39;Link&#39;, &#39;click&#39;, &#39;T2-博问&#39;)">【推荐】程序员问答平台，解决您开发中遇到的技术难题</a><br></div>
+<div id="opt_under_post"></div>
+<script async="async" src="./写给笨人的法线贴图原理 - 饭后温柔 - 博客园_files/gpt.js.下载"></script>
+<script>
+  var googletag = googletag || {};
+  googletag.cmd = googletag.cmd || [];
+</script>
+<script>
+  googletag.cmd.push(function() {
+        googletag.defineSlot('/1090369/C1', [300, 250], 'div-gpt-ad-1546353474406-0').addService(googletag.pubads());
+        googletag.defineSlot('/1090369/C2', [468, 60], 'div-gpt-ad-1539008685004-0').addService(googletag.pubads());
+        googletag.pubads().enableSingleRequest();
+        googletag.enableServices();
+  });
+</script>
+<div id="cnblogs_c1" class="c_ad_block">
+    <div id="div-gpt-ad-1546353474406-0" style="height:250px; width:300px;"></div>
+</div>
+<div id="under_post_news"><div class="recomm-block"><b>相关博文：</b><br>·  <a href="https://www.cnblogs.com/tekkaman/p/3992352.html" target="_blank" onclick="clickRecomItmem(3992352)">法线贴图原理</a><br>·  <a href="https://www.cnblogs.com/klkucan/p/6550176.html" target="_blank" onclick="clickRecomItmem(6550176)">我所了解的法线贴图</a><br>·  <a href="https://www.cnblogs.com/Tearix/p/7682721.html" target="_blank" onclick="clickRecomItmem(7682721)">深入理解法线贴图原理</a><br>·  <a href="https://www.cnblogs.com/jqm304775992/p/4898550.html" target="_blank" onclick="clickRecomItmem(4898550)">NormalMap 法线贴图</a><br>·  <a href="https://www.cnblogs.com/starfallen/archive/2013/03/29/2989277.html" target="_blank" onclick="clickRecomItmem(2989277)">凹凸贴图与法线贴图</a><br></div></div>
+<div id="cnblogs_c2" class="c_ad_block">
+    <div id="div-gpt-ad-1539008685004-0" style="height:60px; width:468px;"></div>
+</div>
+<div id="under_post_kb"><div class="itnews c_ad_block"><b>最新新闻</b>：<br> ·  <a href="https://news.cnblogs.com/n/626976/" target="_blank">美国航空机上 WiFi 全面升级为卫星网络，空中上网的体验更好了</a><br> ·  <a href="https://news.cnblogs.com/n/626975/" target="_blank">任正非：通过科学的数学模型 AI可继承人类智慧</a><br> ·  <a href="https://news.cnblogs.com/n/626974/" target="_blank">兴衰成败三百年：俄罗斯数学的光荣与梦想</a><br> ·  <a href="https://news.cnblogs.com/n/626973/" target="_blank">节能超算Green500排行榜公布 NVIDIA笑到了最后</a><br> ·  <a href="https://news.cnblogs.com/n/626972/" target="_blank">哈勃太空望远镜观测到有“大心脏”的小星系</a><br>» <a href="http://news.cnblogs.com/" title="IT新闻" target="_blank">更多新闻...</a></div></div>
+<div id="HistoryToday" class="c_ad_block"></div>
+<script type="text/javascript">
+ if(enablePostBottom()) {
+    codeHighlight();
+    fixPostBody();
+    setTimeout(function () { incrementViewCount(cb_entryId); }, 50);
+    deliverT2();
+    deliverC1();
+    deliverC2();    
+    loadNewsAndKb();
+    loadBlogSignature();
+    LoadPostInfoBlock(cb_blogId, cb_entryId, cb_blogApp, cb_blogUserGuid);
+    GetPrevNextPost(cb_entryId, cb_blogId, cb_entryCreatedDate, cb_postType);
+    loadOptUnderPost();
+    GetHistoryToday(cb_blogId, cb_blogApp, cb_entryCreatedDate);  
+}
+</script>
+</div>
+
+    
+			</div>
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2" class="FooterCell">
+			
+<p id="footer">
+	Powered by: 
+	<br>
+	
+	<a id="Footer1_Hyperlink3" name="Hyperlink1" href="https://www.cnblogs.com/" style="font-family:Verdana;font-size:12px;">博客园</a>
+	<br>
+	Copyright © 饭后温柔
+</p>
+
+		</td>
+	</tr>
+</tbody></table>
+
+
+
+
+</body></html>
